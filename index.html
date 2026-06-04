@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Barry Fan Room</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Inter", "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      --bg: #07080b;
+      --panel: rgba(17, 20, 25, 0.86);
+      --panel-strong: rgba(11, 13, 18, 0.92);
+      --line: rgba(255, 255, 255, 0.14);
+      --text: #f5f7fb;
+      --muted: #aeb8c8;
+      --gold: #f0c66a;
+      --cyan: #5de4df;
+      --red: #e85d5d;
+      --green: #84d18a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(90deg, rgba(7, 8, 11, 0.98), rgba(7, 8, 11, 0.82) 46%, rgba(7, 8, 11, 0.94)),
+        var(--artist-bg, url("top_barry_assets/weibo_live_01.jpg"));
+      background-size: cover;
+      background-position: center 18%;
+      filter: saturate(0.86) contrast(1.05);
+      transform: scale(1.02);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(7, 8, 11, 0.2), rgba(7, 8, 11, 0.78)),
+        rgba(7, 8, 11, 0.2);
+      backdrop-filter: blur(7px);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1280px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 34px);
+      display: grid;
+      grid-template-columns: minmax(300px, 0.78fr) minmax(520px, 1.22fr);
+      gap: clamp(16px, 2.2vw, 24px);
+      align-items: start;
+    }
+
+    .hero {
+      display: grid;
+      align-content: space-between;
+      min-height: calc(100vh - 56px);
+      position: sticky;
+      top: 28px;
+      padding: clamp(20px, 2.3vw, 28px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(10, 12, 17, 0.82), rgba(10, 12, 17, 0.94));
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .artist-switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .artist-tab {
+      min-height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .artist-tab[aria-pressed="true"] {
+      border-color: rgba(93, 228, 223, 0.82);
+      background: rgba(93, 228, 223, 0.14);
+      color: var(--text);
+    }
+
+    .mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(240, 198, 106, 0.45);
+      border-radius: 8px;
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: clamp(34px, 6vh, 64px) 0 18px;
+      max-width: 9ch;
+      font-size: clamp(58px, 9vw, 112px);
+      line-height: 0.86;
+      letter-spacing: 0;
+    }
+
+    .tagline {
+      max-width: 560px;
+      margin: 0;
+      color: #d8dee9;
+      font-size: clamp(17px, 2.1vw, 24px);
+      line-height: 1.45;
+    }
+
+    .portrait-card {
+      margin: 28px 0 0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .portrait-trigger {
+      width: 100%;
+      display: block;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: zoom-in;
+    }
+
+    .portrait-card img {
+      width: 100%;
+      max-height: min(44vh, 390px);
+      display: block;
+      object-fit: cover;
+      object-position: center 24%;
+    }
+
+    .portrait-card figcaption {
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 42px;
+    }
+
+    .stat {
+      min-height: 82px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .stat b {
+      display: block;
+      color: var(--gold);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .stage {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-height: calc(100vh - 56px);
+      gap: 16px;
+    }
+
+    .player {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .player-head {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cover {
+      width: 132px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+    }
+
+    .now {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--cyan);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .now h2 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 44px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .now p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .track-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .track {
+      min-height: 68px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.055);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .track[aria-pressed="true"] {
+      border-color: rgba(93, 228, 223, 0.82);
+      background: rgba(93, 228, 223, 0.11);
+    }
+
+    .track b,
+    .track span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track b {
+      font-size: 15px;
+    }
+
+    .track span {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .embed-wrap {
+      padding: 18px;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 152px;
+      border: 0;
+      border-radius: 8px;
+      background: #111;
+    }
+
+    .local-player {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      padding: 0 18px 18px;
+    }
+
+    .file-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .photo-input {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    input[type="file"] {
+      max-width: 100%;
+      color: var(--muted);
+    }
+
+    audio {
+      width: 100%;
+      height: 44px;
+    }
+
+    .playback-note {
+      margin: -2px 0 0;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .schedule {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      backdrop-filter: blur(16px);
+      padding: 18px;
+    }
+
+    .schedule-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .schedule-head h2 {
+      margin: 0;
+      font-size: clamp(26px, 3.8vw, 42px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .schedule-head > span {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .event {
+      min-height: 132px;
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr);
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .event-date {
+      min-height: 72px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 4px;
+      border: 1px solid rgba(240, 198, 106, 0.32);
+      border-radius: 8px;
+      color: var(--gold);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .event-date small {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .event-main {
+      min-width: 0;
+    }
+
+    .event-type {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 0 8px;
+      border-radius: 6px;
+      color: #061113;
+      background: var(--cyan);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .event-type.live {
+      background: var(--gold);
+    }
+
+    .event-type.done {
+      color: #0b160c;
+      background: var(--green);
+    }
+
+    .event-type.tba {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .event-title {
+      margin: 10px 0 7px;
+      font-size: 17px;
+      line-height: 1.28;
+    }
+
+    .event-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .event a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .event a:hover {
+      color: var(--cyan);
+    }
+
+    .schedule-note {
+      margin: 14px 0 0;
+      color: rgba(255, 255, 255, 0.58);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .schedule-note a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(140px, 1fr);
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-strong);
+      backdrop-filter: blur(16px);
+    }
+
+    .photo {
+      position: relative;
+      min-height: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #111;
+      cursor: zoom-in;
+    }
+
+    .photo:nth-child(1) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .photo:nth-child(4) {
+      grid-column: span 2;
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 220ms ease, filter 220ms ease;
+    }
+
+    .photo:hover img {
+      transform: scale(1.04);
+      filter: contrast(1.08) saturate(1.05);
+    }
+
+    .photo span {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 7px 9px;
+      color: #fff;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      background: rgba(0, 0, 0, 0.84);
+      z-index: 10;
+    }
+
+    .lightbox.open {
+      display: grid;
+    }
+
+    .lightbox img {
+      max-width: min(92vw, 1080px);
+      max-height: 86vh;
+      object-fit: contain;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .close {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.09);
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .source {
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.54);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1060px) {
+      body {
+        background-position: 35% center;
+      }
+
+      .shell {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+
+      .hero,
+      .stage {
+        min-height: auto;
+      }
+
+      .hero {
+        position: static;
+      }
+
+      h1 {
+        margin-top: 46px;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .hero,
+      .player {
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+      }
+
+      .shell {
+        padding: 0;
+      }
+
+      .hero {
+        padding: 18px;
+      }
+
+      .brand {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .artist-switch {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        margin: 14px -18px 0;
+        padding: 10px 18px;
+        background: rgba(7, 8, 11, 0.88);
+        backdrop-filter: blur(14px);
+      }
+
+      h1 {
+        font-size: clamp(48px, 16vw, 68px);
+        line-height: 0.92;
+      }
+
+      .player-head {
+        grid-template-columns: 94px minmax(0, 1fr);
+      }
+
+      .cover {
+        width: 94px;
+      }
+
+      .portrait-card img {
+        max-height: 300px;
+      }
+
+      .track-list,
+      .schedule-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule {
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+      }
+
+      .schedule-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .event {
+        grid-template-columns: 66px minmax(0, 1fr);
+        min-height: 118px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+        padding: 0 16px 16px;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+      }
+
+      .photo:nth-child(1),
+      .photo:nth-child(4) {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" aria-label="Top Barry Fan Room">
+      <div>
+        <div class="brand">
+          <div class="mark" id="artistMark">TB</div>
+          <span id="artistBrand">Fan Room / Chinese Hip-Hop & R&B</span>
+        </div>
+        <div class="artist-switch" aria-label="选择艺人">
+          <button class="artist-tab" type="button" data-artist="topBarry" aria-pressed="true">Top Barry</button>
+          <button class="artist-tab" type="button" data-artist="songYaxuan" aria-pressed="false">宋亚轩</button>
+        </div>
+        <h1 id="artistName">Top Barry</h1>
+        <p class="tagline" id="artistTagline">给 Top Barry 做一个能听歌、看帅照、收藏现场感的歌迷页面。</p>
+        <figure class="portrait-card">
+          <button class="portrait-trigger" id="heroPortraitButton" type="button" data-full="top_barry_assets/weibo_new_01.jpg" aria-label="放大查看 Top Barry 帅照">
+            <img id="heroPortrait" src="top_barry_assets/weibo_new_01.jpg" alt="Top Barry 帅照" />
+          </button>
+          <figcaption id="portraitCaption">Top Barry · 麦田 RYE 音乐周末公开宣传照</figcaption>
+        </figure>
+        <div class="stats" aria-label="Artist facts">
+          <div class="stat">
+            <b id="statOneValue">535K+</b>
+            <span id="statOneText">Spotify 月听众</span>
+          </div>
+          <div class="stat">
+            <b id="statTwoValue">2026</b>
+            <span id="statTwoText">《一半一半》等新发行</span>
+          </div>
+          <div class="stat">
+            <b id="statThreeValue">Live</b>
+            <span id="statThreeText">说唱 / R&B / 舞台版本</span>
+          </div>
+        </div>
+      </div>
+      <p class="source" id="artistSource">音乐播放来自 Spotify 嵌入；完整播放可能需要 Spotify 登录。本地播放器可直接选择你电脑上的音乐文件。</p>
+    </section>
+
+    <section class="stage">
+      <section class="player" aria-label="Music player">
+        <div class="player-head">
+          <img class="cover" id="currentCover" src="top_barry_assets/cover_half_half.jpg" alt="一半一半 封面" />
+          <div class="now">
+            <p class="eyebrow">Now selected</p>
+            <h2 id="currentTitle">一半一半</h2>
+            <p id="currentMeta">Top Barry, INDEcompany · 2026 · 3:55</p>
+          </div>
+        </div>
+
+        <div class="track-list" id="trackList" aria-label="Track list"></div>
+
+        <div class="embed-wrap">
+          <iframe
+            id="spotifyFrame"
+            title="Spotify Embed: 一半一半"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            src="https://open.spotify.com/embed/track/21x0N6lu6D9kO8rVtTU3mH?utm_source=oembed">
+          </iframe>
+        </div>
+
+        <div class="local-player">
+          <div class="file-row">
+            <span>本地音乐</span>
+            <input id="audioFile" type="file" accept="audio/*" />
+          </div>
+          <audio id="localAudio" controls></audio>
+          <p class="playback-note">想听完整歌曲：请选择你电脑上已有的完整音频文件。平台嵌入受版权限制，通常只能试听或需要登录会员。</p>
+          <div class="file-row photo-input">
+            <span>本地帅照</span>
+            <input id="photoFile" type="file" accept="image/*" />
+          </div>
+        </div>
+      </section>
+
+      <section class="schedule" aria-label="近期公开行程">
+        <div class="schedule-head">
+          <div>
+            <p class="eyebrow">Public Schedule</p>
+            <h2>近期公开行程</h2>
+          </div>
+          <span>更新：2026-06-04</span>
+        </div>
+
+        <div class="schedule-grid" id="scheduleGrid">
+          <article class="event">
+            <div class="event-date">06.07<small>周日</small></div>
+            <div class="event-main">
+              <span class="event-type live">即将演出</span>
+              <h3 class="event-title">
+                <a href="https://www.sina.cn/news/detail/5298894805668167.html" target="_blank" rel="noreferrer">2026《On Fire》HIP-HOP之夜 · 上海</a>
+              </h3>
+              <p class="event-meta">19:00 · 上海浦发银行东方体育中心</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">09.13<small>周日</small></div>
+            <div class="event-main">
+              <span class="event-type live">即将演出</span>
+              <h3 class="event-title">
+                <a href="https://www.showstart.com/event/273504" target="_blank" rel="noreferrer">2026 麦田 RYE 音乐周末 · 北京</a>
+              </h3>
+              <p class="event-meta">17:30-22:00 · 奥林匹克森林公园南园南门露天剧场</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">04.24<small>起播</small></div>
+            <div class="event-main">
+              <span class="event-type">综艺</span>
+              <h3 class="event-title">
+                <a href="https://www.iq.com/album/%E8%B6%85%E7%87%83%E9%9D%92%E6%98%A5%E7%9A%84%E5%90%88%E5%94%B1-2026-lgpvgozzpl?lang=zh_cn" target="_blank" rel="noreferrer">《超燃青春的合唱》</a>
+              </h3>
+              <p class="event-meta">爱奇艺自制真人秀 · 每周五 12:00 更新</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">05.20<small>发行</small></div>
+            <div class="event-main">
+              <span class="event-type">歌曲</span>
+              <h3 class="event-title">
+                <a href="https://ent.sina.cn/2026-05-20/detail-inhynezc7302967.d.html?vt=4" target="_blank" rel="noreferrer">《Wish u never》</a>
+              </h3>
+              <p class="event-meta">00:00 · 张子墨 x TopBarry 合作单曲公开上线</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">03.27<small>MV</small></div>
+            <div class="event-main">
+              <span class="event-type">歌曲 / MV</span>
+              <h3 class="event-title">
+                <a href="https://www.bilibili.com/video/BV1VtXPBNEZb/" target="_blank" rel="noreferrer">《DD backseat》Top Barry & Rapeter</a>
+              </h3>
+              <p class="event-meta">00:00 歌曲上线 · 17:00 官方 MV 上线</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">05.30<small>已演</small></div>
+            <div class="event-main">
+              <span class="event-type done">近期演出</span>
+              <h3 class="event-title">
+                <a href="https://www.sina.cn/news/detail/5290565823368812.html" target="_blank" rel="noreferrer">2026《On Fire》HIP-HOP之夜 · 广州</a>
+              </h3>
+              <p class="event-meta">广州体育馆1号馆 · 阵容含 TopBarry杨博睿</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">05.04<small>已演</small></div>
+            <div class="event-main">
+              <span class="event-type done">音乐节</span>
+              <h3 class="event-title">
+                <a href="https://k.sina.com.cn/article_7517400647_1c0126e4705908bnrs.html" target="_blank" rel="noreferrer">2026 合肥葫芦果音乐节</a>
+              </h3>
+              <p class="event-meta">骆岗公园梦想大草坪 · 5月4日阵容含 Top Barry</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <div class="event-date">影视<small>待官宣</small></div>
+            <div class="event-main">
+              <span class="event-type tba">电视剧 / 电影</span>
+              <h3 class="event-title">暂无已核验上映档期</h3>
+              <p class="event-meta">截至 2026-06-04，公开资料主要为音乐、综艺和演出信息，未找到可靠电视剧或电影官宣上映安排。</p>
+            </div>
+          </article>
+        </div>
+
+        <p class="schedule-note" id="scheduleNote">
+          资料来自公开平台：
+          <a href="https://www.iq.com/actor-info/top-barry-1441993382083205?lang=zh_tw" target="_blank" rel="noreferrer">爱奇艺</a>、
+          <a href="https://biz.ifeng.com/c/8saohW1mPtL" target="_blank" rel="noreferrer">凤凰网</a>、
+          <a href="https://www.showstart.com/event/273504" target="_blank" rel="noreferrer">秀动</a>、
+          <a href="https://www.sina.cn/news/detail/5298894805668167.html" target="_blank" rel="noreferrer">On Fire 上海公开信息</a>、
+          <a href="https://k.sina.com.cn/article_7517400647_1c0126e4705908bnrs.html" target="_blank" rel="noreferrer">新浪</a>。
+        </p>
+      </section>
+
+      <section class="gallery" id="galleryGrid" aria-label="HD gallery">
+        <button class="photo" type="button" data-full="top_barry_assets/weibo_new_01.jpg">
+          <img src="top_barry_assets/weibo_new_01.jpg" alt="Top Barry 麦田音乐周末帅照" />
+          <span>帅照 · 麦田音乐周末</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/weibo_live_01.jpg">
+          <img src="top_barry_assets/weibo_live_01.jpg" alt="Top Barry 镜面帅照" />
+          <span>镜面帅照 · 微博相册</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/photo_top7.jpg">
+          <img src="top_barry_assets/photo_top7.jpg" alt="Top Barry 新说唱七强合照" />
+          <span>新说唱 · 七强时刻</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/photo_behind_large.jpg">
+          <img src="top_barry_assets/photo_behind_large.jpg" alt="Top Barry 新说唱幕后画面" />
+          <span>新说唱幕后</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/cover_half_half.jpg">
+          <img src="top_barry_assets/cover_half_half.jpg" alt="一半一半 高清封面" />
+          <span>一半一半 · 封面</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/cover_marry_live.jpg">
+          <img src="top_barry_assets/cover_marry_live.jpg" alt="Marry Live 高清封面" />
+          <span>Marry Live</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/cover_butingde.jpg">
+          <img src="top_barry_assets/cover_butingde.jpg" alt="不停的 高清封面" />
+          <span>不停的</span>
+        </button>
+        <button class="photo" type="button" data-full="top_barry_assets/cover_pack_it_up.jpg">
+          <img src="top_barry_assets/cover_pack_it_up.jpg" alt="Pack It Up 高清封面" />
+          <span>How I Shine / Pack It Up</span>
+        </button>
+      </section>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="close" id="closeLightbox" type="button" aria-label="关闭">×</button>
+    <img id="lightboxImage" src="" alt="放大图片" />
+  </div>
+
+  <script>
+    const artists = {
+      topBarry: {
+        mark: "TB",
+        brand: "Fan Room / Chinese Hip-Hop & R&B",
+        name: "Top Barry",
+        tagline: "给 Top Barry 做一个能听歌、看帅照、收藏现场感的歌迷页面。",
+        background: "top_barry_assets/weibo_live_01.jpg",
+        portrait: "top_barry_assets/weibo_new_01.jpg",
+        portraitAlt: "Top Barry 帅照",
+        portraitCaption: "Top Barry · 麦田 RYE 音乐周末公开宣传照",
+        source: "平台嵌入受版权限制，完整播放可能需要登录会员。本地播放器可直接选择你电脑上的完整音频文件。",
+        stats: [
+          ["535K+", "Spotify 月听众"],
+          ["2026", "《一半一半》等新发行"],
+          ["Live", "说唱 / R&B / 舞台版本"]
+        ],
+        tracks: [
+          {
+            title: "一半一半",
+            meta: "Top Barry, INDEcompany · 2026 · 3:55",
+            cover: "top_barry_assets/cover_half_half.jpg",
+            embed: "https://open.spotify.com/embed/track/21x0N6lu6D9kO8rVtTU3mH?utm_source=oembed"
+          },
+          {
+            title: "Marry（羁绊）Live",
+            meta: "TIA RAY, Top Barry · 2026 · 3:30",
+            cover: "top_barry_assets/cover_marry_live.jpg",
+            embed: "https://open.spotify.com/embed/track/1523gXJCJ32mYB6OTK3EwC?utm_source=oembed"
+          },
+          {
+            title: "不停的",
+            meta: "INDEcompany, Top Barry · 2025 · 3:15",
+            cover: "top_barry_assets/cover_butingde.jpg",
+            embed: "https://open.spotify.com/embed/track/4LI9SUtv6uK4SdSTahJGuq?utm_source=oembed"
+          },
+          {
+            title: "Pack It Up",
+            meta: "INDEcompany, Top Barry · 2024 · 2:29",
+            cover: "top_barry_assets/cover_pack_it_up.jpg",
+            embed: "https://open.spotify.com/embed/track/1h3O3TQ1zfsMGQ7PcKvrM2?utm_source=oembed"
+          }
+        ],
+        schedule: [
+          ["06.07", "周日", "即将演出", "live", "2026《On Fire》HIP-HOP之夜 · 上海", "19:00 · 上海浦发银行东方体育中心", "https://www.sina.cn/news/detail/5298894805668167.html"],
+          ["09.13", "周日", "即将演出", "live", "2026 麦田 RYE 音乐周末 · 北京", "17:30-22:00 · 奥林匹克森林公园南园南门露天剧场", "https://www.showstart.com/event/273504"],
+          ["04.24", "起播", "综艺", "", "《超燃青春的合唱》", "爱奇艺自制真人秀 · 每周五 12:00 更新", "https://www.iq.com/album/%E8%B6%85%E7%87%83%E9%9D%92%E6%98%A5%E7%9A%84%E5%90%88%E5%94%B1-2026-lgpvgozzpl?lang=zh_cn"],
+          ["05.20", "发行", "歌曲", "", "《Wish u never》", "00:00 · 张子墨 x TopBarry 合作单曲公开上线", "https://ent.sina.cn/2026-05-20/detail-inhynezc7302967.d.html?vt=4"],
+          ["03.27", "MV", "歌曲 / MV", "", "《DD backseat》Top Barry & Rapeter", "00:00 歌曲上线 · 17:00 官方 MV 上线", "https://www.bilibili.com/video/BV1VtXPBNEZb/"],
+          ["05.30", "已演", "近期演出", "done", "2026《On Fire》HIP-HOP之夜 · 广州", "广州体育馆1号馆 · 阵容含 TopBarry杨博睿", "https://www.sina.cn/news/detail/5290565823368812.html"],
+          ["05.04", "已演", "音乐节", "done", "2026 合肥葫芦果音乐节", "骆岗公园梦想大草坪 · 5月4日阵容含 Top Barry", "https://k.sina.com.cn/article_7517400647_1c0126e4705908bnrs.html"],
+          ["影视", "待官宣", "电视剧 / 电影", "tba", "暂无已核验上映档期", "截至 2026-06-04，公开资料主要为音乐、综艺和演出信息，未找到可靠电视剧或电影官宣上映安排.", ""]
+        ],
+        note: '资料来自公开平台：<a href="https://www.iq.com/actor-info/top-barry-1441993382083205?lang=zh_tw" target="_blank" rel="noreferrer">爱奇艺</a>、<a href="https://biz.ifeng.com/c/8saohW1mPtL" target="_blank" rel="noreferrer">凤凰网</a>、<a href="https://www.showstart.com/event/273504" target="_blank" rel="noreferrer">秀动</a>、<a href="https://www.sina.cn/news/detail/5298894805668167.html" target="_blank" rel="noreferrer">On Fire 上海公开信息</a>、<a href="https://k.sina.com.cn/article_7517400647_1c0126e4705908bnrs.html" target="_blank" rel="noreferrer">新浪</a>。',
+        gallery: [
+          ["top_barry_assets/weibo_new_01.jpg", "Top Barry 麦田音乐周末帅照", "帅照 · 麦田音乐周末"],
+          ["top_barry_assets/weibo_live_01.jpg", "Top Barry 镜面帅照", "镜面帅照 · 微博相册"],
+          ["top_barry_assets/photo_top7.jpg", "Top Barry 新说唱七强合照", "新说唱 · 七强时刻"],
+          ["top_barry_assets/photo_behind_large.jpg", "Top Barry 新说唱幕后画面", "新说唱幕后"],
+          ["top_barry_assets/cover_half_half.jpg", "一半一半 高清封面", "一半一半 · 封面"],
+          ["top_barry_assets/cover_marry_live.jpg", "Marry Live 高清封面", "Marry Live"],
+          ["top_barry_assets/cover_butingde.jpg", "不停的 高清封面", "不停的"],
+          ["top_barry_assets/cover_pack_it_up.jpg", "Pack It Up 高清封面", "How I Shine / Pack It Up"]
+        ]
+      },
+      songYaxuan: {
+        mark: "SYX",
+        brand: "Fan Room / Vocal, Variety & Stage",
+        name: "宋亚轩",
+        tagline: "给宋亚轩做一个手机上也好看的歌迷页面：听歌、看图、追综艺和舞台行程。",
+        background: "top_barry_assets/song_yaxuan_iqiyi.jpg",
+        portrait: "top_barry_assets/song_yaxuan_maoyan_portrait.png",
+        portraitAlt: "宋亚轩 猫眼艺人页头像",
+        portraitCaption: "宋亚轩 · 猫眼艺人页公开头像",
+        source: "宋亚轩图片只采用已确认对应本人的公开图源。平台嵌入多为试听，完整播放请使用你本地已有的完整音频。",
+        stats: [
+          ["2004", "3月4日出生"],
+          ["TNT", "时代少年团成员"],
+          ["Live", "声乐 / 音综 / 舞台"]
+        ],
+        tracks: [
+          {
+            title: "无趣生活指南",
+            meta: "宋亚轩 · 2026 · Apple Music",
+            cover: "top_barry_assets/cover_song_yaxuan_boring.jpg",
+            embed: "https://embed.music.apple.com/us/album/%E7%84%A1%E8%B6%A3%E7%94%9F%E6%B4%BB%E6%8C%87%E5%8D%97/1883001647?i=1883001648"
+          },
+          {
+            title: "spr.",
+            meta: "Song Yaxuan · 2025 · 3:13",
+            cover: "top_barry_assets/cover_song_yaxuan_spr.jpg",
+            embed: "https://embed.music.apple.com/us/album/spr/1799676158?i=1799676159"
+          },
+          {
+            title: "5:23 PM",
+            meta: "Song Yaxuan · 2023 · Single",
+            cover: "top_barry_assets/cover_song_yaxuan_523pm.jpg",
+            embed: "https://embed.music.apple.com/us/album/5-23-pm/1743719855?i=1743719858"
+          }
+        ],
+        schedule: [
+          ["05.23", "首播", "综艺", "", "《国乐无双》正式首播", "每周六 19:35 CCTV-6电影频道、浙江卫视；20:05 Z视介", "https://cn.chinadaily.com.cn/a/202605/25/WS6a140714a310942cc49ae2b7.html"],
+          ["05.16", "先导片", "综艺", "", "《国乐无双》先导片", "CCTV-6 21:00 · 浙江卫视 20:15 · Z视介 20:45", "https://www.sina.cn/news/detail/5299144176445684.html"],
+          ["05.01", "已演", "演唱会", "done", "时代少年团「加冠礼」广州站", "5月1日、2日、4日、5日 · 广州南沙大湾区文化体育中心", "https://k.sina.com.cn/article_7857263936_v1d454554006801kaje.html"],
+          ["03.09", "发行", "歌曲", "", "《无趣生活指南》", "宋亚轩个人单曲 · Apple Music 公开发行信息", "https://music.apple.com/us/album/%E7%84%A1%E8%B6%A3%E7%94%9F%E6%B4%BB%E6%8C%87%E5%8D%97/1883001647?i=1883001648"],
+          ["05.14", "官宣", "综艺", "", "《国乐无双》宋亚轩官宣海报", "公开信息明确为宋亚轩单人海报，页面图库已使用对应海报", "https://k.sina.com.cn/article_7857201856_1d45362c001905gcjy.html"],
+          ["影视", "待官宣", "电视剧 / 电影", "tba", "暂无已核验 2026 新剧/电影定档", "截至 2026-06-04，公开资料主要为综艺、音乐和团体演出，未找到可靠新剧或电影上映安排。", ""]
+        ],
+        note: '资料来自公开平台：<a href="https://www.maoyan.com/films/celebrity/2842509" target="_blank" rel="noreferrer">猫眼艺人页</a>、<a href="https://www.iq.com/actor-info/song-ya-xuan-237963005?lang=en_us" target="_blank" rel="noreferrer">爱奇艺艺人页</a>、<a href="https://cn.chinadaily.com.cn/a/202605/25/WS6a140714a310942cc49ae2b7.html" target="_blank" rel="noreferrer">中国日报《国乐无双》</a>、<a href="https://www.sina.cn/news/detail/5299144176445684.html" target="_blank" rel="noreferrer">新浪/Z视介公开信息</a>、<a href="https://music.apple.com/us/album/%E7%84%A1%E8%B6%A3%E7%94%9F%E6%B4%BB%E6%8C%87%E5%8D%97/1883001647?i=1883001648" target="_blank" rel="noreferrer">Apple Music</a>。',
+        gallery: [
+          ["top_barry_assets/song_yaxuan_maoyan_portrait.png", "宋亚轩 猫眼艺人页头像", "宋亚轩 · 猫眼艺人页"],
+          ["top_barry_assets/song_yaxuan_iqiyi.jpg", "宋亚轩 爱奇艺艺人页图", "宋亚轩 · 爱奇艺艺人页"],
+          ["top_barry_assets/song_yaxuan_guoyue_single.jpg", "宋亚轩 国乐无双单人海报", "国乐无双 · 宋亚轩单人海报"],
+          ["top_barry_assets/song_yaxuan_route_01.jpg", "宋亚轩 国乐无双录制路透", "国乐无双录制 · 来源页明确标注宋亚轩"],
+          ["top_barry_assets/song_yaxuan_maoyan_photo_01.jpg", "宋亚轩 猫眼艺人页头像二", "猫眼艺人页 · 造型图"],
+          ["top_barry_assets/cover_song_yaxuan_boring.jpg", "无趣生活指南封面", "无趣生活指南 · 封面"],
+          ["top_barry_assets/cover_song_yaxuan_spr.jpg", "spr. 封面", "spr. · 封面"],
+          ["top_barry_assets/cover_song_yaxuan_523pm.jpg", "5:23 PM 封面", "5:23 PM · 封面"]
+        ]
+      }
+    };
+
+    let currentArtistKey = "topBarry";
+    let currentTrackIndex = 0;
+
+    const artistTabs = [...document.querySelectorAll(".artist-tab")];
+    const artistMark = document.getElementById("artistMark");
+    const artistBrand = document.getElementById("artistBrand");
+    const artistName = document.getElementById("artistName");
+    const artistTagline = document.getElementById("artistTagline");
+    const portraitCaption = document.getElementById("portraitCaption");
+    const artistSource = document.getElementById("artistSource");
+    const statOneValue = document.getElementById("statOneValue");
+    const statOneText = document.getElementById("statOneText");
+    const statTwoValue = document.getElementById("statTwoValue");
+    const statTwoText = document.getElementById("statTwoText");
+    const statThreeValue = document.getElementById("statThreeValue");
+    const statThreeText = document.getElementById("statThreeText");
+    const trackList = document.getElementById("trackList");
+    const scheduleGrid = document.getElementById("scheduleGrid");
+    const scheduleNote = document.getElementById("scheduleNote");
+    const galleryGrid = document.getElementById("galleryGrid");
+    const cover = document.getElementById("currentCover");
+    const title = document.getElementById("currentTitle");
+    const meta = document.getElementById("currentMeta");
+    const frame = document.getElementById("spotifyFrame");
+    const heroPortrait = document.getElementById("heroPortrait");
+    const heroPortraitButton = document.getElementById("heroPortraitButton");
+
+    function selectTrack(index) {
+      currentTrackIndex = index;
+      const tracks = artists[currentArtistKey].tracks;
+      const track = tracks[index];
+      cover.src = track.cover;
+      cover.alt = `${track.title} 封面`;
+      title.textContent = track.title;
+      meta.textContent = track.meta;
+      frame.src = track.embed;
+      frame.title = `Music Embed: ${track.title}`;
+      [...trackList.querySelectorAll(".track")].forEach((button, buttonIndex) => {
+        button.setAttribute("aria-pressed", String(buttonIndex === index));
+      });
+    }
+
+    function renderTracks(tracks) {
+      trackList.innerHTML = tracks.map((track, index) => `
+        <button class="track" type="button" aria-pressed="${index === currentTrackIndex}" data-track="${index}">
+          <b>${track.title}</b>
+          <span>${track.meta}</span>
+        </button>
+      `).join("");
+    }
+
+    function renderSchedule(items) {
+      scheduleGrid.innerHTML = items.map(([date, dateNote, type, typeClass, eventTitle, eventMeta, href]) => {
+        const titleHtml = href
+          ? `<a href="${href}" target="_blank" rel="noreferrer">${eventTitle}</a>`
+          : eventTitle;
+        return `
+          <article class="event">
+            <div class="event-date">${date}<small>${dateNote}</small></div>
+            <div class="event-main">
+              <span class="event-type ${typeClass}">${type}</span>
+              <h3 class="event-title">${titleHtml}</h3>
+              <p class="event-meta">${eventMeta}</p>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderGallery(items) {
+      galleryGrid.innerHTML = items.map(([src, alt, label]) => `
+        <button class="photo" type="button" data-full="${src}">
+          <img src="${src}" alt="${alt}" />
+          <span>${label}</span>
+        </button>
+      `).join("");
+    }
+
+    function renderArtist(key) {
+      currentArtistKey = key;
+      currentTrackIndex = 0;
+      const artist = artists[key];
+      document.documentElement.style.setProperty("--artist-bg", `url("${artist.background}")`);
+      artistTabs.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.artist === key));
+      });
+      artistMark.textContent = artist.mark;
+      artistBrand.textContent = artist.brand;
+      artistName.textContent = artist.name;
+      artistTagline.textContent = artist.tagline;
+      heroPortrait.src = artist.portrait;
+      heroPortrait.alt = artist.portraitAlt;
+      heroPortraitButton.dataset.full = artist.portrait;
+      heroPortraitButton.setAttribute("aria-label", `放大查看 ${artist.name} 图片`);
+      portraitCaption.textContent = artist.portraitCaption;
+      artistSource.textContent = artist.source;
+      [[statOneValue, statOneText], [statTwoValue, statTwoText], [statThreeValue, statThreeText]].forEach((nodes, index) => {
+        nodes[0].textContent = artist.stats[index][0];
+        nodes[1].textContent = artist.stats[index][1];
+      });
+      renderTracks(artist.tracks);
+      renderSchedule(artist.schedule);
+      scheduleNote.innerHTML = artist.note;
+      renderGallery(artist.gallery);
+      selectTrack(0);
+    }
+
+    artistTabs.forEach((button) => {
+      button.addEventListener("click", () => renderArtist(button.dataset.artist));
+    });
+
+    trackList.addEventListener("click", (event) => {
+      const button = event.target.closest(".track");
+      if (!button) return;
+      selectTrack(Number(button.dataset.track));
+    });
+
+    const audioInput = document.getElementById("audioFile");
+    const localAudio = document.getElementById("localAudio");
+    let localAudioUrl = "";
+
+    audioInput.addEventListener("change", () => {
+      const file = audioInput.files && audioInput.files[0];
+      if (!file) return;
+      if (localAudioUrl) URL.revokeObjectURL(localAudioUrl);
+      localAudioUrl = URL.createObjectURL(file);
+      localAudio.src = localAudioUrl;
+      localAudio.play().catch(() => {});
+    });
+
+    const photoInput = document.getElementById("photoFile");
+    let localPhotoUrl = "";
+
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      if (localPhotoUrl) URL.revokeObjectURL(localPhotoUrl);
+      localPhotoUrl = URL.createObjectURL(file);
+      heroPortrait.src = localPhotoUrl;
+      heroPortraitButton.dataset.full = localPhotoUrl;
+    });
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const closeLightbox = document.getElementById("closeLightbox");
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-full]");
+      if (!button) return;
+      lightboxImage.src = button.dataset.full;
+      lightbox.classList.add("open");
+      lightbox.setAttribute("aria-hidden", "false");
+    });
+
+    function hideLightbox() {
+      lightbox.classList.remove("open");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImage.src = "";
+    }
+
+    closeLightbox.addEventListener("click", hideLightbox);
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) hideLightbox();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideLightbox();
+    });
+
+    renderArtist("topBarry");
+  </script>
+</body>
+</html>
